@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A modern, responsive Income & Expense Tracker built with HTML, CSS and Vanilla JavaScript. Track your balance, income, expenses, budgets and view charts." />
+    <meta name="keywords" content="income tracker, expense tracker, budget app, finance dashboard, personal finance" />
+    <meta name="author" content="Your Name" />
+    <meta name="theme-color" content="#2563EB" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Income & Expense Tracker" />
+    <meta property="og:description" content="Modern dashboard to track your income, expenses and budget." />
+    <meta property="og:type" content="website" />
+
+    <title>Income & Expense Tracker — Smart Finance Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💰%3C/text%3E%3C/svg%3E" />
+
+    <!-- Google Font: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+    <!-- ============ LOADING OVERLAY ============ -->
+    <div class="loader-overlay" id="loaderOverlay" aria-hidden="true">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-wallet"></i>
+                <span>FinTrack</span>
+            </div>
+            <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#dashboard" class="nav-link active" data-section="dashboard">
+                    <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
+                </a></li>
+                <li><a href="#income" class="nav-link" data-section="income">
+                    <i class="fa-solid fa-arrow-trend-up"></i><span>Income</span>
+                </a></li>
+                <li><a href="#expense" class="nav-link" data-section="expense">
+                    <i class="fa-solid fa-arrow-trend-down"></i><span>Expense</span>
+                </a></li>
+                <li><a href="#categories" class="nav-link" data-section="categories">
+                    <i class="fa-solid fa-tags"></i><span>Categories</span>
+                </a></li>
+                <li><a href="#budget" class="nav-link" data-section="budget">
+                    <i class="fa-solid fa-bullseye"></i><span>Budget</span>
+                </a></li>
+                <li><a href="#charts" class="nav-link" data-section="charts">
+                    <i class="fa-solid fa-chart-pie"></i><span>Charts</span>
+                </a></li>
+                <li><a href="#reports" class="nav-link" data-section="reports">
+                    <i class="fa-solid fa-file-lines"></i><span>Reports</span>
+                </a></li>
+                <li><a href="#settings" class="nav-link" data-section="settings">
+                    <i class="fa-solid fa-gear"></i><span>Settings</span>
+                </a></li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="version">v1.0.0</div>
+        </div>
+    </aside>
+
+    <!-- ============ MAIN WRAPPER ============ -->
+    <div class="main-wrapper">
+
+        <!-- ============ TOPBAR ============ -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="icon-btn" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+            </div>
+
+            <div class="topbar-right">
+                <div class="search-box" role="search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="globalSearch" placeholder="Search transactions..." aria-label="Search transactions" />
+                </div>
+
+                <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+
+                <button class="btn btn-primary" id="addTransactionBtn" aria-label="Add new transaction">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Add Transaction</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ============ CONTENT ============ -->
+        <main class="content" id="content">
+
+            <!-- ===== DASHBOARD SECTION ===== -->
+            <section class="section active" id="dashboardSection" aria-labelledby="dashboardTitle">
+                <h2 id="dashboardTitle" class="section-title visually-hidden">Dashboard</h2>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card balance">
+                        <div class="stat-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Balance</span>
+                            <span class="stat-value" id="totalBalance">$0.00</span>
+                            <span class="stat-trend" id="balanceTrend">
+                                <i class="fa-solid fa-arrow-up"></i> 0% this month
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card income">
+                        <div class="stat-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Income</span>
+                            <span class="stat-value" id="totalIncome">$0.00</span>
+                            <span class="stat-trend up" id="incomeTrend">
+                                <i class="fa-solid fa-arrow-up"></i> 0% this month
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card expense">
+                        <div class="stat-icon"><i class="fa-solid fa-arrow-trend-down"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Expense</span>
+                            <span class="stat-value" id="totalExpense">$0.00</span>
+                            <span class="stat-trend down" id="expenseTrend">
+                                <i class="fa-solid fa-arrow-down"></i> 0% this month
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card transactions">
+                        <div class="stat-icon"><i class="fa-solid fa-receipt"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Transactions</span>
+                            <span class="stat-value" id="totalTransactions">0</span>
+                            <span class="stat-trend" id="transactionsTrend">
+                                <i class="fa-solid fa-chart-line"></i> All time
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Summary -->
+                <div class="dashboard-grid">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-chart-column"></i> Monthly Overview</h3>
+                            <select id="chartPeriod" aria-label="Chart period">
+                                <option value="6">Last 6 Months</option>
+                                <option value="12">Last 12 Months</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="monthlyChart" aria-label="Monthly income vs expense chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-clock-rotate-left"></i> Recent Transactions</h3>
+                            <a href="#reports" class="link-btn" data-section="reports">View All <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                        <div class="card-body">
+                            <ul class="transaction-list" id="recentTransactions" aria-live="polite"></ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== INCOME SECTION ===== -->
+            <section class="section" id="incomeSection" aria-labelledby="incomeTitle">
+                <div class="section-header">
+                    <h2 id="incomeTitle" class="section-title">
+                        <i class="fa-solid fa-arrow-trend-up success"></i> Income
+                    </h2>
+                    <button class="btn btn-success" data-type="income" data-open-modal>
+                        <i class="fa-solid fa-plus"></i> Add Income
+                    </button>
+                </div>
+
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <label for="incomeSearch">Search</label>
+                        <input type="text" id="incomeSearch" placeholder="Search income..." />
+                    </div>
+                    <div class="filter-group">
+                        <label for="incomeCategory">Category</label>
+                        <select id="incomeCategory">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="incomeDateFrom">From</label>
+                        <input type="date" id="incomeDateFrom" />
+                    </div>
+                    <div class="filter-group">
+                        <label for="incomeDateTo">To</label>
+                        <input type="date" id="incomeDateTo" />
+                    </div>
+                    <button class="btn btn-outline" id="clearIncomeFilters">
+                        <i class="fa-solid fa-rotate-left"></i> Clear
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body table-wrapper">
+                        <table class="data-table" id="incomeTable" aria-label="Income transactions">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Note</th>
+                                    <th class="text-right">Amount</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="incomeTableBody"></tbody>
+                        </table>
+                        <div class="empty-state" id="incomeEmpty">
+                            <i class="fa-solid fa-piggy-bank"></i>
+                            <h3>No Income Yet</h3>
+                            <p>Start by adding your first income entry.</p>
+                            <button class="btn btn-success" data-type="income" data-open-modal>
+                                <i class="fa-solid fa-plus"></i> Add Income
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== EXPENSE SECTION ===== -->
+            <section class="section" id="expenseSection" aria-labelledby="expenseTitle">
+                <div class="section-header">
+                    <h2 id="expenseTitle" class="section-title">
+                        <i class="fa-solid fa-arrow-trend-down danger"></i> Expense
+                    </h2>
+                    <button class="btn btn-danger" data-type="expense" data-open-modal>
+                        <i class="fa-solid fa-plus"></i> Add Expense
+                    </button>
+                </div>
+
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <label for="expenseSearch">Search</label>
+                        <input type="text" id="expenseSearch" placeholder="Search expense..." />
+                    </div>
+                    <div class="filter-group">
+                        <label for="expenseCategory">Category</label>
+                        <select id="expenseCategory">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="expenseDateFrom">From</label>
+                        <input type="date" id="expenseDateFrom" />
+                    </div>
+                    <div class="filter-group">
+                        <label for="expenseDateTo">To</label>
+                        <input type="date" id="expenseDateTo" />
+                    </div>
+                    <button class="btn btn-outline" id="clearExpenseFilters">
+                        <i class="fa-solid fa-rotate-left"></i> Clear
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body table-wrapper">
+                        <table class="data-table" id="expenseTable" aria-label="Expense transactions">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Note</th>
+                                    <th class="text-right">Amount</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenseTableBody"></tbody>
+                        </table>
+                        <div class="empty-state" id="expenseEmpty">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <h3>No Expense Yet</h3>
+                            <p>Start by adding your first expense entry.</p>
+                            <button class="btn btn-danger" data-type="expense" data-open-modal>
+                                <i class="fa-solid fa-plus"></i> Add Expense
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== CATEGORIES SECTION ===== -->
+            <section class="section" id="categoriesSection" aria-labelledby="categoriesTitle">
+                <div class="section-header">
+                    <h2 id="categoriesTitle" class="section-title">
+                        <i class="fa-solid fa-tags primary"></i> Categories
+                    </h2>
+                    <button class="btn btn-primary" id="addCategoryBtn">
+                        <i class="fa-solid fa-plus"></i> Add Category
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="categories-grid" id="categoriesGrid"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== BUDGET SECTION ===== -->
+            <section class="section" id="budgetSection" aria-labelledby="budgetTitle">
+                <div class="section-header">
+                    <h2 id="budgetTitle" class="section-title">
+                        <i class="fa-solid fa-bullseye primary"></i> Budget
+                    </h2>
+                    <button class="btn btn-primary" id="setBudgetBtn">
+                        <i class="fa-solid fa-plus"></i> Set Budget
+                    </button>
+                </div>
+
+                <div class="budget-summary">
+                    <div class="card budget-overview">
+                        <div class="card-header">
+                            <h3>Monthly Budget</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="budget-big">
+                                <span class="budget-spent" id="budgetSpent">$0</span>
+                                <span class="budget-sep">of</span>
+                                <span class="budget-total" id="budgetTotal">$0</span>
+                            </div>
+                            <div class="progress-bar large">
+                                <div class="progress-fill" id="budgetProgressBar" style="width: 0%"></div>
+                            </div>
+                            <div class="budget-meta">
+                                <span id="budgetRemaining">$0 remaining</span>
+                                <span id="budgetPercent">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Category Budgets</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="budget-list" id="budgetList"></ul>
+                        <div class="empty-state" id="budgetEmpty">
+                            <i class="fa-solid fa-bullseye"></i>
+                            <h3>No Budget Set</h3>
+                            <p>Create a monthly or category budget to track spending.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== CHARTS SECTION ===== -->
+            <section class="section" id="chartsSection" aria-labelledby="chartsTitle">
+                <h2 id="chartsTitle" class="section-title">
+                    <i class="fa-solid fa-chart-pie primary"></i> Charts & Analytics
+                </h2>
+
+                <div class="charts-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Expense by Category</h3>
+                        </div>
+                        <div class="card-body chart-container">
+                            <canvas id="expensePieChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Income by Category</h3>
+                        </div>
+                        <div class="card-body chart-container">
+                            <canvas id="incomePieChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3>Monthly Report</h3>
+                        </div>
+                        <div class="card-body chart-container large">
+                            <canvas id="monthlyReportChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== REPORTS SECTION ===== -->
+            <section class="section" id="reportsSection" aria-labelledby="reportsTitle">
+                <div class="section-header">
+                    <h2 id="reportsTitle" class="section-title">
+                        <i class="fa-solid fa-file-lines primary"></i> Reports
+                    </h2>
+                    <div class="export-group">
+                        <button class="btn btn-outline" id="exportCSV">
+                            <i class="fa-solid fa-file-csv"></i> Export CSV
+                        </button>
+                        <button class="btn btn-outline" id="exportPDF">
+                            <i class="fa-solid fa-file-pdf"></i> Export PDF
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <label for="reportSearch">Search</label>
+                        <input type="text" id="reportSearch" placeholder="Search..." />
+                    </div>
+                    <div class="filter-group">
+                        <label for="reportType">Type</label>
+                        <select id="reportType">
+                            <option value="">All</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="reportCategory">Category</label>
+                        <select id="reportCategory">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="reportDateFrom">From</label>
+                        <input type="date" id="reportDateFrom" />
+                    </div>
+                    <div class="filter-group">
+                        <label for="reportDateTo">To</label>
+                        <input type="date" id="reportDateTo" />
+                    </div>
+                    <button class="btn btn-outline" id="clearReportFilters">
+                        <i class="fa-solid fa-rotate-left"></i> Clear
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body table-wrapper">
+                        <table class="data-table" id="reportTable" aria-label="All transactions">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Note</th>
+                                    <th class="text-right">Amount</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTableBody"></tbody>
+                        </table>
+                        <div class="empty-state" id="reportEmpty">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <h3>No Transactions Found</h3>
+                            <p>Try adjusting your filters or add a new transaction.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== SETTINGS SECTION ===== -->
+            <section class="section" id="settingsSection" aria-labelledby="settingsTitle">
+                <h2 id="settingsTitle" class="section-title">
+                    <i class="fa-solid fa-gear primary"></i> Settings
+                </h2>
+
+                <div class="settings-grid">
+                    <div class="card">
+                        <div class="card-header"><h3>Appearance</h3></div>
+                        <div class="card-body">
+                            <div class="setting-row">
+                                <div>
+                                    <strong>Dark Mode</strong>
+                                    <p>Switch between light and dark theme</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="darkModeToggle" />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header"><h3>Currency</h3></div>
+                        <div class="card-body">
+                            <div class="setting-row">
+                                <div>
+                                    <strong>Currency Symbol</strong>
+                                    <p>Choose your preferred currency</p>
+                                </div>
+                                <select id="currencySelect" aria-label="Currency">
+                                    <option value="$">USD ($)</option>
+                                    <option value="€">EUR (€)</option>
+                                    <option value="£">GBP (£)</option>
+                                    <option value="৳">BDT (৳)</option>
+                                    <option value="₹">INR (₹)</option>
+                                    <option value="¥">JPY (¥)</option>
+                                    <option value="¥">CNY (¥)</option>
+                                    <option value="A$">AUD (A$)</option>
+                                    <option value="C$">CAD (C$)</option>
+                                    <option value="CHF">CHF</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header"><h3>Data Management</h3></div>
+                        <div class="card-body">
+                            <div class="setting-row">
+                                <div>
+                                    <strong class="danger">Delete All Data</strong>
+                                    <p>This will permanently remove all your transactions, categories and budgets.</p>
+                                </div>
+                                <button class="btn btn-danger" id="deleteAllBtn">
+                                    <i class="fa-solid fa-trash"></i> Delete All
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header"><h3>About</h3></div>
+                        <div class="card-body">
+                            <p><strong>FinTrack</strong> — A modern personal finance tracker.</p>
+                            <p>Version: 1.0.0</p>
+                            <p>Built with HTML, CSS & Vanilla JavaScript.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ============ TRANSACTION MODAL ============ -->
+    <div class="modal-overlay" id="transactionModal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Transaction</h3>
+                <button class="icon-btn" data-close-modal aria-label="Close modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form class="modal-body" id="transactionForm" novalidate>
+                <input type="hidden" id="transactionId" />
+
+                <div class="form-group">
+                    <label>Type</label>
+                    <div class="type-toggle" role="tablist">
+                        <button type="button" class="type-btn active" data-type="income" role="tab" aria-selected="true">
+                            <i class="fa-solid fa-arrow-trend-up"></i> Income
+                        </button>
+                        <button type="button" class="type-btn" data-type="expense" role="tab" aria-selected="false">
+                            <i class="fa-solid fa-arrow-trend-down"></i> Expense
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="transactionTitle">Title *</label>
+                    <input type="text" id="transactionTitle" placeholder="e.g. Monthly Salary" required maxlength="60" />
+                    <span class="error-msg" id="titleError"></span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transactionAmount">Amount *</label>
+                        <input type="number" id="transactionAmount" placeholder="0.00" step="0.01" min="0.01" required />
+                        <span class="error-msg" id="amountError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="transactionDate">Date *</label>
+                        <input type="date" id="transactionDate" required />
+                        <span class="error-msg" id="dateError"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="transactionCategory">Category *</label>
+                    <select id="transactionCategory" required>
+                        <option value="">Select category</option>
+                    </select>
+                    <span class="error-msg" id="categoryError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="transactionNote">Note</label>
+                    <textarea id="transactionNote" placeholder="Optional note..." rows="3" maxlength="200"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveTransactionBtn">
+                        <i class="fa-solid fa-check"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============ CATEGORY MODAL ============ -->
+    <div class="modal-overlay" id="categoryModal" aria-hidden="true" role="dialog" aria-labelledby="categoryModalTitle">
+        <div class="modal small">
+            <div class="modal-header">
+                <h3 id="categoryModalTitle">Add Category</h3>
+                <button class="icon-btn" data-close-modal aria-label="Close modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form class="modal-body" id="categoryForm" novalidate>
+                <input type="hidden" id="categoryId" />
+                <div class="form-group">
+                    <label for="categoryName">Name *</label>
+                    <input type="text" id="categoryName" placeholder="e.g. Entertainment" required maxlength="30" />
+                    <span class="error-msg" id="categoryNameError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="categoryIcon">Icon (FontAwesome class)</label>
+                    <input type="text" id="categoryIcon" placeholder="fa-solid fa-star" value="fa-solid fa-tag" />
+                </div>
+                <div class="form-group">
+                    <label for="categoryColor">Color</label>
+                    <input type="color" id="categoryColor" value="#2563EB" />
+                </div>
+                <div class="form-group">
+                    <label for="categoryType">Type</label>
+                    <select id="categoryType">
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                        <option value="both">Both</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-check"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============ BUDGET MODAL ============ -->
+    <div class="modal-overlay" id="budgetModal" aria-hidden="true" role="dialog" aria-labelledby="budgetModalTitle">
+        <div class="modal small">
+            <div class="modal-header">
+                <h3 id="budgetModalTitle">Set Budget</h3>
+                <button class="icon-btn" data-close-modal aria-label="Close modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form class="modal-body" id="budgetForm" novalidate>
+                <input type="hidden" id="budgetId" />
+                <div class="form-group">
+                    <label for="budgetType">Budget Type</label>
+                    <select id="budgetType">
+                        <option value="monthly">Monthly Overall</option>
+                        <option value="category">Category</option>
+                    </select>
+                </div>
+                <div class="form-group" id="budgetCategoryGroup" style="display:none;">
+                    <label for="budgetCategory">Category *</label>
+                    <select id="budgetCategory"></select>
+                    <span class="error-msg" id="budgetCategoryError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="budgetAmount">Amount *</label>
+                    <input type="number" id="budgetAmount" placeholder="0.00" step="0.01" min="0.01" required />
+                    <span class="error-msg" id="budgetAmountError"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-check"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============ CONFIRM MODAL ============ -->
+    <div class="modal-overlay" id="confirmModal" aria-hidden="true" role="alertdialog" aria-labelledby="confirmTitle">
+        <div class="modal small">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Are you sure?</h3>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="confirmCancel">Cancel</button>
+                <button class="btn btn-danger" id="confirmOk">
+                    <i class="fa-solid fa-trash"></i> Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ TOAST CONTAINER ============ -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- jsPDF CDN for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- App Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/app.js"></script>
+</body>
+                      </html>
