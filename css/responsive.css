@@ -1,0 +1,194 @@
+/* ========================================
+   Responsive Styles
+   Mobile, Tablet, Desktop
+   ======================================== */
+
+/* ---------- Tablet (<= 1024px) ---------- */
+@media (max-width: 1024px) {
+    :root {
+        --sidebar-width: 240px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-box input { width: 220px; }
+
+    .stat-value { font-size: 22px; }
+}
+
+/* ---------- Small Tablet / Large Mobile (<= 768px) ---------- */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-xl);
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .sidebar-close {
+        display: inline-flex;
+        width: 36px; height: 36px;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius);
+        color: var(--text-muted);
+    }
+    .sidebar-close:hover { background: var(--border-light); }
+
+    .main-wrapper { margin-left: 0; }
+
+    #menuToggle { display: inline-flex; }
+
+    .topbar { padding: 0 16px; }
+    .page-title { font-size: 16px; }
+
+    .search-box { display: none; }
+
+    .btn span { display: none; }
+    .btn { padding: 10px 14px; }
+
+    .content { padding: 16px; }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .stat-card { padding: 16px; gap: 12px; }
+    .stat-icon { width: 44px; height: 44px; font-size: 18px; }
+    .stat-value { font-size: 18px; }
+    .stat-label { font-size: 11px; }
+    .stat-trend { font-size: 11px; }
+
+    .section-title { font-size: 18px; }
+    .section-header { margin-bottom: 16px; }
+
+    .card-header { padding: 16px; }
+    .card-body { padding: 16px; }
+
+    .filters-bar {
+        padding: 12px;
+        gap: 10px;
+    }
+    .filter-group { min-width: 140px; }
+
+    .form-row { grid-template-columns: 1fr; }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .data-table th, .data-table td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .toast-container {
+        top: 16px;
+        right: 16px;
+        left: 16px;
+    }
+    .toast {
+        min-width: auto;
+        max-width: 100%;
+    }
+
+    .modal {
+        max-width: 100%;
+        margin: 10px;
+    }
+}
+
+/* ---------- Mobile (<= 480px) ---------- */
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+        padding: 14px;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .category-card { padding: 14px; gap: 10px; }
+    .category-icon { width: 38px; height: 38px; font-size: 15px; }
+    .category-name { font-size: 13px; }
+
+    .budget-big { gap: 6px; }
+    .budget-spent { font-size: 24px; }
+    .budget-total { font-size: 18px; }
+
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .section-header .btn { width: 100%; justify-content: center; }
+
+    .export-group {
+        width: 100%;
+    }
+    .export-group .btn { flex: 1; justify-content: center; }
+
+    .topbar-right { gap: 8px; }
+
+    .action-btns { flex-direction: row; }
+
+    /* Hide less important columns on mobile */
+    .data-table th:nth-child(4),
+    .data-table td:nth-child(4) { display: none; }
+}
+
+/* ---------- Very Small Mobile (<= 360px) ---------- */
+@media (max-width: 360px) {
+    .content { padding: 12px; }
+    .card-header { padding: 14px; }
+    .card-body { padding: 14px; }
+
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-title { font-size: 14px; }
+}
+
+/* ---------- Large Desktop (>= 1400px) ---------- */
+@media (min-width: 1400px) {
+    .content { padding: 32px; }
+    .stat-value { font-size: 30px; }
+}
+
+/* ---------- Print ---------- */
+@media print {
+    .sidebar, .topbar, .modal-overlay, .toast-container, .btn, .filters-bar {
+        display: none !important;
+    }
+    .main-wrapper { margin-left: 0; }
+    .card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+}
+
+/* ---------- Reduced Motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ---------- Sidebar Overlay for Mobile ---------- */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.sidebar-overlay.active { opacity: 1; visibility: visible; }
